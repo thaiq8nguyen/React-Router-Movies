@@ -3,11 +3,11 @@ import axios from 'axios';
 
 import MovieCard from "./MovieCard";
 
-const Movie = (props) => {
+const Movie = ({id, saveMovie}) => {
   const [movie, setMovie] = useState();
- 
+  
   useEffect(() => {
-    const id = 1;
+   
     // change ^^^ that line and grab the id from the URL
     // You will NEED to add a dependency array to this effect hook
 
@@ -20,11 +20,11 @@ const Movie = (props) => {
           console.error(error);
         });
 
-  },[]);
+  },[id]);
   
   // Uncomment this only when you have moved on to the stretch goals
-  const saveMovie = () => {
-    const addToSavedList = props.addToSavedList;
+  const save = () => {
+    const addToSavedList = saveMovie;
     addToSavedList(movie)
   }
 
@@ -32,7 +32,6 @@ const Movie = (props) => {
     return <div>Loading movie information...</div>;
   }
 
- 
   return (
     <div className="box">
         <div className="level">
@@ -40,7 +39,7 @@ const Movie = (props) => {
             <MovieCard movie={movie}/>
           </div>
         <div className="level-right">
-          <button className="button is-info" onClick={saveMovie}>Save</button>
+          <button className="button is-info" onClick={save}>Save</button>
         </div>
     </div>
     </div>
