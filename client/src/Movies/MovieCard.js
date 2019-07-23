@@ -10,19 +10,9 @@ const MovieCard = props => {
       </div>
       <div className="card-content">
         <p className="is-size-4 has-text-weight-bold">{props.movie.Title}</p>
-        <p>Year: {props.movie.Year}</p>
+        <p>Year: <span className="has-text-grey">{props.movie.Year}</span></p>
       </div>
-      
-      {/* <div className="movie-metascore">
-        Metascore: <strong>{props.movie.metascore}</strong>
-      </div> */}
-      {/* <h3>Actors</h3>
-
-      {props.movie.stars.map(star => (
-        <div key={star} className="movie-star">
-          {star}
-        </div>
-      ))} */}
+    
     </div>
   )
 };

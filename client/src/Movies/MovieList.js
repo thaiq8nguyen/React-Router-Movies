@@ -6,23 +6,13 @@ import { Link } from "react-router-dom";
 import MovieCard from "./MovieCard";
 const MovieList = props => {
   const [movies, setMovies] = useState([])
+  
   useEffect(() => {
-    // const getMovies = () => {
-    //   axios
-    //     .get('http://localhost:5000/api/movies')
-    //     .then(response => {
-    //       setMovies(response.data);
-    //     })
-    //     .catch(error => {
-    //       console.error('Server Error', error);
-    //     });
-    // }
-    
-    // getMovies();
+  
     const getMovies = () => {
       omdbAPI.getMovies().then(response => {
         setMovies(response.data.Search);
-        console.log(response.data.Search);
+        
       })
       .catch(error => {
         console.log(error)
@@ -54,7 +44,7 @@ const MovieList = props => {
 function MovieDetails({ movie }) {
   
   return (
-    <Link to={`/movies/${movie.id}`}>
+    <Link to={`/movies/${movie.imdbID}`}>
       <MovieCard movie={movie}/>
     </Link>
     

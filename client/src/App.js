@@ -3,28 +3,47 @@ import { Route } from "react-router-dom";
 import SavedList from './Movies/SavedList';
 import MovieList from "./Movies/MovieList";
 import Movie from "./Movies/Movie";
+import Search from "./components/Search/Search";
+import Navbar from "./components/Navbar/Navbar";
 
 
 const App = () => {
   const [savedList, setSavedList] = useState( [] );
 
-  const addToSavedList = movie => {
-    setSavedList( [...savedList, movie] );
+  const addToSavedList = newMovie => {
+    const movieIsOnList = savedList.findIndex(movie => movie.Title === newMovie.Title )
+    
+    if (movieIsOnList === -1) {
+      setSavedList( [...savedList, newMovie] );
+    } else {
+      console.log("The movie is already on the saved list");
+    }
+    
   };
 
+  const clearSavedList = () => {
+    setSavedList([]);
+  }
+
   return (
-    <section className="section">
+    <div>
+      <Navbar/>
+      <section className="section">
       <div className="container">
+        <Search/>
         <div className="columns">
-        <div className="column is-one-third">
+        <div className="column is-one-quarter">
           <aside>
-            <SavedList list={savedList} />
+            <SavedList list={savedList} clearList={clearSavedList} />
           </aside>
         </div>
         <div className="column">
         <Route exact path="/" component={MovieList}/>
       
-      <Route path="/movies/:id" render={({match}) => <Movie id={match.params.id} saveMovie={addToSavedList}/>}/>
+        <Route path="/movies/:id" render={props => {
+          
+          return <Movie {...props} saveMovie={addToSavedList}/>
+        }}/>
         </div>
         </div>
         
@@ -33,6 +52,8 @@ const App = () => {
 
       
     </section>
+    </div>
+    
   );
 };
 

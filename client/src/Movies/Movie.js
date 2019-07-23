@@ -1,31 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { Route, Link, Switch } from "react-router-dom";
+import omdbAPI from "../services/omdbAPI";
 
-import MovieCard from "./MovieCard";
+import About from "../components/Movie/About";
+import Actors from "../components/Movie/Actors";
+import Writers from "../components/Movie/Writers";
 
-const Movie = ({id, saveMovie}) => {
+const Movie = (props) => {
   const [movie, setMovie] = useState();
+
+  const imdbID = props.match.params.id;
+  console.log("Inside Movie: ",props)
   
+
   useEffect(() => {
    
-    // change ^^^ that line and grab the id from the URL
-    // You will NEED to add a dependency array to this effect hook
+    const getMovieByID = () => {
+      omdbAPI.getMovieByID(imdbID)
+      .then(response => {
+        setMovie(response.data);
+        
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    }
 
-      //  axios
-      //   .get(`http://localhost:5000/api/movies/${id}`)
-      //   .then(response => {
-      //     setMovie(response.data);
-      //   })
-      //   .catch(error => {
-      //     console.error(error);
-      //   });
+    getMovieByID();
 
-  },[id]);
+  },[imdbID]);
   
-  // Uncomment this only when you have moved on to the stretch goals
-  const save = () => {
-    
-    saveMovie(movie)
+  const save = (event) => {
+    event.preventDefault();
+    const saveMovie = props.saveMovie;
+    saveMovie(movie);
   }
 
   if (!movie) {
@@ -34,15 +42,51 @@ const Movie = ({id, saveMovie}) => {
 
   return (
     <div className="box">
-        <div className="level">
-          <div className="level-left">
-            <MovieCard movie={movie}/>
+      <article className="media">
+        <figure className="media-left">
+          <img src={movie.Poster} alt=""/>
+        </figure>
+        <div className="media-content">
+          <div className="tabs">
+            <ul>
+              <Link to={`/movies/${movie.imdbID}`} className="is-active">Movie</Link>
+              <Link to={`/movies/${movie.imdbID}/actors`}className="">Actors</Link>
+              <Link to={`/movies/${movie.imdbID}/writers`}className="">Writers</Link>
+            </ul>
           </div>
-        <div className="level-right">
-          <button className="button is-info" onClick={save}>Save</button>
+          
+          
+          <Route exact path="/movies/:id" render={props => <About movie={ {
+              imdbRating: movie.imdbRating,
+              title: movie.Title,
+              director: movie.Director,
+              year: movie.Year,
+              rated: movie.Rated,
+              metascore: movie.Metascore,
+              plot: movie.Plot
+            }} 
+            />
+            }
+          />
+          <Route path="/movies/:id/actors" render={props => <Actors actors={movie.Actors} />}/>
+          <Route path="/movies/:id/writers" render={props => <Writers writers={movie.Writer}/>}/>
+          
+          
         </div>
+      </article>
+      <div className="level">
+        <div className="level-left">
+          
+          <a href={`https://www.imdb.com/title/${movie.imdbID}`} className="button is-info level-item">IMDB</a>
+          <a href="" className="button level-item" onClick={save}>Save</a>
+          </div>
+          
+        
+      </div>
     </div>
-    </div>
+        
+    
+    
     
   );
 }
