@@ -77,7 +77,7 @@ const Movie = (props) => {
       <div className="level">
         <div className="level-left">
           
-          <a href={`https://www.imdb.com/title/${movie.imdbID}`} className="button is-info level-item">IMDB</a>
+          <a href={`https://www.imdb.com/title/${movie.imdbID}`} target="_blank" className="button is-info level-item">IMDB</a>
           <a href="" className="button level-item" onClick={save}>Save</a>
           </div>
           

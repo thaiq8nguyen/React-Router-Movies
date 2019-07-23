@@ -6,11 +6,11 @@ import MovieCard from "../../Movies/MovieCard";
 
 const Search = () => {
     const [movies, setMovies] = useState([]);
-    const [movieTitle, setMovieTitle] = useState("The Matrix")
+    const [movieTitle, setMovieTitle] = useState("Harry Potter")
     
     const handleSearchSubmit = (event) => {
         event.preventDefault();
-
+        console.log("submit")
         console.log(movieTitle)
 
         omdbAPI.getMoviesByTitle(movieTitle)
@@ -30,6 +30,7 @@ const Search = () => {
     const clearMovies = () => {
         
         setMovies([]);
+        setMovieTitle("")
         
         
     }
@@ -39,15 +40,20 @@ const Search = () => {
             <form action="#" onSubmit={handleSearchSubmit}>
                 <div className="field is-grouped">
                     <p className="control is-expanded">
-                        <input type="text" className="input" placeholder="Movie Title" onChange={handleInput}/>
+                        <input type="text" 
+                            className="input" 
+                            placeholder="Movie Title" 
+                            value={movieTitle} 
+                            onChange={handleInput}
+                        />
                     </p>
                     
                     <div className="control">
-                        <a href="#" className="button is-dark" type="submit">Search</a>
+                        <button className="button is-dark" type="submit">Search</button>
                         
                     </div>
                     <div className="control">
-                        {movies.length > 0 &&<a href="#" className="button" onClick={clearMovies}>Clear</a>}
+                        {movies.length > 0 &&<button className="button" onClick={clearMovies}>Clear</button>}
                     </div>
                 </div>
             </form>
