@@ -1,56 +1,93 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { Route, Link, Switch } from "react-router-dom";
+import omdbAPI from "../services/omdbAPI";
+
+import About from "../components/Movie/About";
+import Actors from "../components/Movie/Actors";
+import Writers from "../components/Movie/Writers";
 
 const Movie = (props) => {
   const [movie, setMovie] = useState();
- 
-  useEffect(() => {
-    const id = 1;
-    // change ^^^ that line and grab the id from the URL
-    // You will NEED to add a dependency array to this effect hook
 
-       axios
-        .get(`http://localhost:5000/api/movies/${id}`)
-        .then(response => {
-          setMovie(response.data);
-        })
-        .catch(error => {
-          console.error(error);
-        });
-
-  },[]);
+  const imdbID = props.match.params.id;
+  console.log("Inside Movie: ",props)
   
-  // Uncomment this only when you have moved on to the stretch goals
-  // const saveMovie = () => {
-  //   const addToSavedList = props.addToSavedList;
-  //   addToSavedList(movie)
-  // }
+
+  useEffect(() => {
+   
+    const getMovieByID = () => {
+      omdbAPI.getMovieByID(imdbID)
+      .then(response => {
+        setMovie(response.data);
+        
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    }
+
+    getMovieByID();
+
+  },[imdbID]);
+  
+  const save = (event) => {
+    event.preventDefault();
+    const saveMovie = props.saveMovie;
+    saveMovie(movie);
+  }
 
   if (!movie) {
     return <div>Loading movie information...</div>;
   }
 
-  const { title, director, metascore, stars } = movie;
   return (
-    <div className="save-wrapper">
-      <div className="movie-card">
-        <h2>{title}</h2>
-        <div className="movie-director">
-          Director: <em>{director}</em>
-        </div>
-        <div className="movie-metascore">
-          Metascore: <strong>{metascore}</strong>
-        </div>
-        <h3>Actors</h3>
-
-        {stars.map(star => (
-          <div key={star} className="movie-star">
-            {star}
+    <div className="box">
+      <article className="media">
+        <figure className="media-left">
+          <img src={movie.Poster} alt=""/>
+        </figure>
+        <div className="media-content">
+          <div className="tabs">
+            <ul>
+              <Link to={`/movies/${movie.imdbID}`} className="is-active">Movie</Link>
+              <Link to={`/movies/${movie.imdbID}/actors`}className="">Actors</Link>
+              <Link to={`/movies/${movie.imdbID}/writers`}className="">Writers</Link>
+            </ul>
           </div>
-        ))}
+          
+          
+          <Route exact path="/movies/:id" render={props => <About movie={ {
+              imdbRating: movie.imdbRating,
+              title: movie.Title,
+              director: movie.Director,
+              year: movie.Year,
+              rated: movie.Rated,
+              metascore: movie.Metascore,
+              plot: movie.Plot
+            }} 
+            />
+            }
+          />
+          <Route path="/movies/:id/actors" render={props => <Actors actors={movie.Actors} />}/>
+          <Route path="/movies/:id/writers" render={props => <Writers writers={movie.Writer}/>}/>
+          
+          
+        </div>
+      </article>
+      <div className="level">
+        <div className="level-left">
+          
+          <a href={`https://www.imdb.com/title/${movie.imdbID}`} target="_blank" className="button is-info level-item">IMDB</a>
+          <a href="" className="button level-item" onClick={save}>Save</a>
+          </div>
+          
+        
       </div>
-      <div className="save-button">Save</div>
     </div>
+        
+    
+    
+    
   );
 }
 
